@@ -924,42 +924,56 @@ class Login:
 
 
     def onay(self):
-        if messagebox.askyesno("Onay","Siparişi Onaylamak İstiyor musunuz"):
-
+      if messagebox.askyesno("Onay","Siparişi Onaylamak İstiyor musunuz"):
+       if self.listbox.size() == 0:
+          messagebox.showerror("Eror", "Sepetiniz Boş")        
+       else:
+        
          try:
-            con = mysql.connector.connect(host="localhost", user="root", password="dgsgk102002os",
-                                            database="pythonproject")
-            cur = con.cursor()
-            sql = ("SELECT id FROM kullanicilar where email='" + str(self.email_txt.get()) + "'")
-            cur.execute(sql)
-            rows = cur.fetchone()
-            id = rows[0]
+                    con = mysql.connector.connect(host="localhost", user="root", password="dgsgk102002os",
+                                                  database="pythonproject")
+                    cur = con.cursor()
+                    sql = ("SELECT id FROM kullanicilar where email='" + str(self.email_txt.get()) + "'")
+                    cur.execute(sql)
+                    rows = cur.fetchone()
+                    id = rows[0]
 
-            print(id)
-            if self.selectedKampanya=="2 Siparişe Sonraki Siparis Hediye":
-               sql = ("update kullanicilar set 2siparise1siparis="+str(0)+" where id='"+str(id)+"'")
+                    print(id)
+                    if self.selectedKampanya == "2 Siparişe Sonraki Siparis Hediye":
+                        sql = ("update kullanicilar set 2siparise1siparis=" + str(0) + " where id='" + str(id) + "'")
 
-            elif self.selectedKampanya=="İlk Sipariş Kampanyası(%50 indirim)" and self.sepetteKampanya2<2:
-              sql=("update kullanicilar set girisKampanyası="+str(0)+", 2siparise1siparis=%s where id='"+str(id)+"'")
+                    elif self.selectedKampanya == "İlk Sipariş Kampanyası(%50 indirim)" and self.sepetteKampanya2 < 2:
+                        sql = ("update kullanicilar set girisKampanyası=" + str(
+                            0) + ", 2siparise1siparis=%s where id='" + str(id) + "'")
 
-            elif self.selectedKampanya=="İlk Sipariş Kampanyası(%50 indirim)":
-               sql = ("update kullanicilar set girisKampanyası="+str(0)+" where id='"+str(id)+"'")
+                    elif self.selectedKampanya == "İlk Sipariş Kampanyası(%50 indirim)":
+                        sql = ("update kullanicilar set girisKampanyası=" + str(0) + " where id='" + str(id) + "'")
 
-            elif self.selectedKampanya=="--Kampanya İstemiyorum--" and self.sepetteKampanya2<2:
-                sql = ("update kullanicilar set 2siparise1siparis="+str(int(self.sepetteKampanya2)+1)+" where id='"+str(id)+"'")
+                    elif self.selectedKampanya == "--Kampanya İstemiyorum--" and self.sepetteKampanya2 < 2:
+                        sql = ("update kullanicilar set 2siparise1siparis=" + str(
+                            int(self.sepetteKampanya2) + 1) + " where id='" + str(id) + "'")
 
-            elif self.selectedKampanya=="Bulunamadı!":
-                sql = ("update kullanicilar set 2siparise1siparis=" + str( int(self.sepetteKampanya2) + 1) + " where id='" + str(id) + "'")
-            
+                    elif self.selectedKampanya == "--Kampanya İstemiyorum--" and self.sepetteKampanya2 == 2:
+                        sql = ("update kullanicilar set 2siparise1siparis=" + str(
+                            self.sepetteKampanya2) + " where id='" + str(id) + "'")
 
 
-            cur.execute(sql)
-            con.commit()
-            con.close()
+                    elif self.selectedKampanya == "Bulunamadı!":
+                        sql = ("update kullanicilar set 2siparise1siparis=" + str(
+                            int(self.sepetteKampanya2) + 1) + " where id='" + str(id) + "'")
 
+                    cur.execute(sql)
+                    con.commit()
+                    con.close()
+                    self.listbox.delete(0, END)
+                    self.hesapLabel.config(text="")
+                    self.hesapTl.clear()
+                    self.a.clear()
+
+                    self.appscreen()
          except Exception as e:
              messagebox.showerror("Error", f"Error Due to: {str(e)}", parent=self.root)
-        else:
+      else:
             pass
 
 
